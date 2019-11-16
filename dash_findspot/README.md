@@ -1,4 +1,4 @@
-# Dash Uber Rides Demo
+# Find Spot demo
 
 ## About this app
 
@@ -12,7 +12,7 @@ To run this app first clone repository and then open a terminal to the app folde
 
 ```
 git clone https://github.com/plotly/dash-sample-apps.git
-cd dash-sample-apps/apps/dash-uber-rides-demo
+cd dash-sample-apps
 ```
 
 Create and activate a new virtual environment (recommended) by running
