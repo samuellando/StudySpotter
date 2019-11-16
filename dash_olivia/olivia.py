@@ -45,14 +45,24 @@ densities = []
 
 for location in y['locations']:
     names.append(location['name'])
-    lats.append(float(location['lng']))
-    lngs.append(float(location['lat']))
+    lats.append(float(location['lat']))
+    lngs.append(float(location['lng']))
     densities.append(int(location['density']))
 
-
-
+print(names)
+print(densities)
 
 app.layout = html.Div([
+    html.Div([
+        dcc.Dropdown(
+            options=[
+                {'label': 'McGill Trottier', 'value': 'mcgilltrotier'},
+                {'label': 'Concordia EV', 'value': 'concordiaev'},
+            ],
+            placeholder="Select a Library",
+        )
+    ]), 
+    
     dcc.Graph(
         figure=go.Figure(
             data=[  
@@ -61,6 +71,7 @@ app.layout = html.Div([
                     lon=lngs,
                 )
             ],
+            
             layout=Layout(
                 autosize=True,
                 margin=go.layout.Margin(l=0, r=35, t=0, b=0),
@@ -75,13 +86,15 @@ app.layout = html.Div([
             ),
         )
     ),
+
     dcc.Graph(
         figure=go.Figure(
             data=[
-                go.Bar(x=[list_of_locations["Trottier"]["lat"]], y=[list_of_locations["Trottier"]["lon"]], marker=dict(color="red"), hoverinfo="x")
+                go.Bar(x=names, y=densities, marker=dict(color="blue"), hoverinfo="x")
             ]
         )
     )
+
 ])
 
 
