@@ -21,14 +21,43 @@ for csv in os.listdir(DATA_DIR):
   df.drop(' BSSID', axis=1, inplace=True)
   df.drop(' Probed ESSIDs', axis=1, inplace=True)
   df.drop(' First time seen', axis=1, inplace=True)
+  df.drop(' # packets', axis=1, inplace=True)
   df.columns = [
     'mac',
     'last_seen',
-    'power',
-    'num_packets'
+    'power'
   ]
 
-#print(df)
+print(df)
 data_dictionary = df.to_dict() 
-#print(data_dictionary)
-  #from_dictionary = pd.DataFrame.from_dict(data_dictionary, orient='index', columns=['A', 'B', 'C', 'D'])
+print(data_dictionary)
+
+from datetime import datetime
+# unix_time return the input time - A hours in seconds
+def unix_time(dt):
+    dt = datetime.strptime(dt, " %Y-%m-%d %H:%M:%S")
+    epoch = datetime.utcfromtimestamp(0)
+    return (dt - epoch).total_seconds() - 5*3600
+
+e = unix_time(data_dictionary['last_seen'][0])
+print(e)
+
+print(time.time()-e)
+for i in range(0,len(df)-1):
+  stamp = unix_time(data_dictionary['last_seen'][i])
+  
+  if time.time() - 24*60*60 > stamp:
+    del data_dictionary['mac'][i]
+    del data_dictionary['last_seen'][i]
+    del data_dictionary['power'][i]
+  else:
+    data_dictionary['last_seen'][i] = stamp
+print(data_dictionary)
+
+#df to json file
+print(df)
+
+#output result.json
+with open('result.json', 'w') as fp:
+  jsondf=df.to_json()
+  json.dump(jsondf, fp)
