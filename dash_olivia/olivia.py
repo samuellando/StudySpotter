@@ -34,23 +34,31 @@ list_of_locations = {
 #response.content
 
 
+r = requests.get('http://35.232.203.137', auth=('user', 'pass'))
+y = r.json()
+print(y)
 
-data = response.json()
-print(data)
+names = []
+lats = []
+lngs = []
+densities = []
+
+for location in y['locations']:
+    names.append(location['name'])
+    lats.append(float(location['lng']))
+    lngs.append(float(location['lat']))
+    densities.append(int(location['density']))
 
 
 
-#df[" Last time seen"] = pd.to_datetime(df[" Last time seen"], format="%Y-%m-%d %H:%M")
-#df.index = df[" Last time seen"]
-#df.drop(" Last time seen", 1, inplace=True)
 
 app.layout = html.Div([
     dcc.Graph(
         figure=go.Figure(
             data=[  
                 Scattermapbox(
-                    lat=[list_of_locations["Trottier"]["lat"]],
-                    lon=[list_of_locations["Trottier"]["lon"]],
+                    lat=lats,
+                    lon=lngs,
                 )
             ],
             layout=Layout(
