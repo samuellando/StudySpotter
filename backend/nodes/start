@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Starts the monitoring on the correct wifi antena.
+
+sudo airmon-ng start wlp3s0

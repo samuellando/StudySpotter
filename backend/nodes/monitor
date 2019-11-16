@@ -7,7 +7,7 @@
 
 if [ $# -ne 1 ]; then
   echo "Wrong number of input parameters."
-  exit()
+  exit
 fi
 
-sudo airodump-ng -w $1 --output-format csv wlp3s0mon
+sudo airodump-ng -w $1 --output-format csv --background 1 wlp3s0mon
