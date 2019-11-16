@@ -1,0 +1,192 @@
+<html>
+	<head>
+		<!-- Plotly.js -->
+		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+		<!-- Bootsrap.css -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+		<!-- Bootstrap.js -->
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+		<script async defer
+		    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqLHlXnddmzrh-Z-rgCdi6o9zuSxFThH8&callback=initMap">
+		    </script>
+
+	  <style>
+	  	body {
+	  		margin : 0px 0px 0px 0px;
+	  	}
+
+	  	#gd {
+	  		width: 100%;
+	  		height: 100%;
+	  		margin: 0px 0px 0px 0px;
+	  	}
+
+	  	#searchbar {
+	  		width : 50%;
+	  		position: absolute;
+	  		z-index: 1;
+	  		margin : 10px 10px 10px 10px;
+	  	}
+
+	  </style>
+	</head>
+	<body>
+		<!-- Plotly chart will be drawn inside this DIV -->
+		<form id="barform">
+			<input id = "searchbar" class="form-control" type="text" placeholder="Search" aria-label="Search">
+		</form>
+
+		<div id="gd"></div>
+
+		  <script>
+		 //  	$(function(){
+			//    $(window).load(function(){
+			//     	geocoder = new google.maps.Geocoder();			    
+		 //    		console.log(geocoder);
+			//    });
+			// });
+
+			$( document ).ready(function() {
+			    $(window).load(function(){
+			    	geocoder = new google.maps.Geocoder();			    
+		    		// console.log(geocoder);
+			   });
+			});
+
+		  	//Geocoder
+		    
+		  	//Plot Data
+
+		  	var data = [{
+		        type: 'scattermapbox',
+		        mode: 'markers+text',
+		        text: [
+		            
+		        ],
+		        lat: [
+		            
+		        ],
+		        lon: [
+		            
+		        ],
+		        
+		        marker: {
+		            size: 7,
+		            color: [
+		                
+		            ],
+		            line: {
+		                width: 1
+		            }
+		        }
+		    }];
+
+		    var testinput = {
+		  		locations : [{id : "0", name: "Trottier Building", lat : 45.507603, lon : -73.578973, density : 71}]
+		  	};
+
+		  	for (i = 0 ; i < testinput.locations.length ; i++) {
+		  		var loc = testinput.locations[i];
+		  		data[0].text.push(loc.name);
+		  		data[0].lat.push(loc.lat);
+		  		data[0].lon.push(loc.lon);
+		  		data[0].marker.color.push('#b3de69');
+		  	};
+		  	console.log(data);
+
+		  	// var data = [{
+		   //      type: 'scattermapbox',
+		   //      mode: 'markers+text',
+		   //      text: [
+		   //          'Montreal', 'Toronto', 'Vancouver', 'Calgary', 'Edmonton',
+		   //          'Ottawa', 'Halifax', 'Victoria', 'Winnepeg', 'Regina'
+		   //      ],
+		   //      lon: [
+		   //          -73.57, -79.24, -123.06, -114.1, -113.28,
+		   //          -75.43, -63.57, -123.21, -97.13, -104.6
+		   //      ],
+		   //      lat: [
+		   //          45.5, 43.4, 49.13, 51.1, 53.34, 45.24,
+		   //          44.64, 48.25, 49.89, 50.45
+		   //      ],
+		   //      marker: {
+		   //          size: 7,
+		   //          color: [
+		   //              '#bebada', '#fdb462', '#fb8072', '#d9d9d9', '#bc80bd',
+		   //              '#b3de69', '#8dd3c7', '#80b1d3', '#fccde5', '#ffffb3'
+		   //          ],
+		   //          line: {
+		   //              width: 1
+		   //          }
+		   //      },
+		   //      name: 'Canadian cities',
+		   //      textposition: [
+		   //          'top right', 'top left', 'top center', 'bottom right', 'top right',
+		   //          'top left', 'bottom right', 'bottom left', 'top right', 'top right'
+		   //      ],
+		   //  }];
+
+
+		  	$( "#barform" ).submit(function( event ) {
+		  		$.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyCqLHlXnddmzrh-Z-rgCdi6o9zuSxFThH8', function(data) {
+		  			var location = data.results[0].geometry.location;
+		  			var lat = location.lat;
+		  			var lng = location.lng;
+
+		  			plot(lat, lng);
+			        // var text = `Date: ${data.date}<br>
+			        //             Time: ${data.time}<br>
+			        //             Unix time: ${data.milliseconds_since_epoch}`
+			                    
+			        
+			        // $(".mypanel").html(text);
+			    });
+		  		// console.log(responseObj);
+				event.preventDefault();
+			});
+		  	
+			var layout = {
+				dragmode: "zoom",
+				margin: { r: 0, t: 0, b: 0, l: 0 },
+				mapbox: { style: "carto-positron", center: { lat: 0, lon: 0 }, zoom: 10 },
+			};
+
+		  	plot(45.515678, -73.620670);
+
+		  	//Function to plot
+		  	function plot(lat, lon) {
+
+		  		layout.mapbox.center.lat = lat;
+		  		layout.mapbox.center.lon = lon;
+
+				Plotly.newPlot("gd", data, layout).then(gd => {
+				  gd.on('plotly_click', d => {
+				    var pt = (d.points || [])[0]
+
+				    console.log(pt)
+				    
+				    // switch(pt.location) {
+				    //   case 'CAN':
+				    //     console.log('you clicked on CAN')
+				    //     break
+				    //   case 'USA':
+				    //     console.log('you clicked on USA')
+				    //     break
+				    // }
+				    
+				  })
+				});
+			}
+
+			
+
+		  </script>
+
+
+
+	</body>
+</html>
