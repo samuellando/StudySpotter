@@ -28,9 +28,6 @@ python app.py
 You can run the app on your browser at http://127.0.0.1:8050
 
 
-## Screenshots
-
-![demo.png](demo.png)
 
 ## Resources
 
