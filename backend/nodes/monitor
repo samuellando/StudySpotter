@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# This script takes a single input, the node ID.
+# For example "mcgill_trotier_3"
+# This data is then exported in csv format into files with name formats "mcgill_trotier_3-1.csv"
+# Where a new csv is started every X hours.
+
+if [ $# -ne 1 ]; then
+  echo "Wrong number of input parameters."
+  exit()
+fi
+
+sudo airodump-ng -w $1 --output-format csv wlp3s0mon
