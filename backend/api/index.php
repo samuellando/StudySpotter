@@ -5,10 +5,10 @@ $username = "api";
 $password = "GQ1$795aL";
 $dbname = "goodquestion";
 
-// Create connection
+// Create connection.
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Check connection
+// Check connection.
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
@@ -44,19 +44,53 @@ if ($CREATE) {
 }
 
 // POST requests from the pi.
-/*
-$sql = "INSERT INTO locations (id, name, dsc, lng, lat, avg) VALUES ('mcgilltrotier', 'McGill Trotier Building', 'insert description here', 45.507572, -73.578976, 10);";
-//$sql = "";
-for ($i = 0; $i < 100; $i++) {
-    $t = random_int(1573862400, 1573875180);
-    $sql .= "INSERT INTO mcgilltrotier (mac, last, power, label) VALUES ('FFFFFFFF', $t, 5, 'First floor');";
+if (isset($_POST['location']) && isset($_POST['label'])) {
+    // Create the tables if needed.
+    $loc = $_POST['location'];
+    $lab = $_POST['label'];
+    if (isset($_POST['name']) && isset($_POST['lat']) && isset($_POST['lng']) && isset($_POST['id']) && isset($_POST['dsc'])) {
+        $name = $_POST['name'];
+        $id = $_POST['id'];
+        $lat = $_POST['lat'];
+        $lng = $_POST['lng'];
+        $sql = "CREATE TABLE $loc (
+            mac VARCHAR(225),
+            last INT(255),
+            power INT(255),
+            label VARCHAR(255)
+        ); INSERT INTO locations (id, name, dsc, lat, lng, avg) VALUES ('$id', '$name', '$dsc', $lat, $lng, 0)";
+    }
+    // Import the new data.
+    $json = $_SERVER['data'];
+    $data = json_decode($json);
+    $sql = "";
+    for ($i = 0; $i < sizeof($data['macs']); $i++) {
+        $mac = $data['macs'][$i];
+        $last = $data['last'][$i];
+        $power = $data['power'][$i];
+        $sql .= "INSERT INTO $loc (mac, last, power, label) VALUES ($mac, $last, $power)"
+    }
+    if ($conn->query($sql) !== TRUE) {
+       echo "{'status': 'bad'}";
+       exit();
+    }
+    // Now compute the avg for the location.
+    $sql = "SELECT avg locations WHERE id='$loc'";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $avg = $row['avg'];
+    }
+    $avg = ($avg + sizeof($data['macs'])) / 2;
+    $density = sizeof($data['macs']) / $avg * 100;
+    $sql = "UPDATE locations SET avg='$avg', density='$density' WHERE id='$loc'";
+    if ($conn->query($sql) === TRUE) {
+       echo "{'status': 'good'}";
+    } else {
+       echo "{'status': 'bad'}";
+    }
 }
-if ($conn->multi_query($sql) === TRUE) {
-    echo "New records created successfully";
-} else {
-    echo "Error: " . $sql . "<br>" . $conn->error;
-}
-*/
+
 // GET requests from the frontend.
 if (isset($_GET["location"])) {
     $loc = $_GET['location'];
