@@ -97,7 +97,7 @@ if (isset($_GET["location"])) {
             $avgs = array();
             while($row = $result->fetch_assoc()) {
                 $last = $row['last'];
-                $block = intdiv((time() - intval($last)), (30*60));
+                $block = intdiv(((time() - 5*3600) - intval($last)), (30*60));
                 $points[$block] = $points[$block] + 1;
             }
             for ($i = 0; $i < 48; $i++) {
