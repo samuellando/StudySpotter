@@ -1,6 +1,8 @@
 # StudySpotter
 ## Team-GoodQuestion
 
+[studyspotter.ca](https://studyspotter.herokuapp.com)
+
 ## Inspiration
 We wanted to solve a real, everyday problem that affects us students!  Have you ever went to a library prepared to get stuff done, but end up wasting time looking for a good spot?  This problem has always plagued us. We decided to create StudySpotter to help people better use the study spaces available to them. 
 
