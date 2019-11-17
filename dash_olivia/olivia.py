@@ -63,7 +63,9 @@ app.layout = html.Div([
         )
     ]), 
     
+    
     dcc.Graph(
+        id = "map",
         figure=go.Figure(
             data=[  
                 Scattermapbox(
@@ -86,6 +88,7 @@ app.layout = html.Div([
             ),
         )
     ),
+    html.Div(id='my-div'),
 
     dcc.Graph(
         figure=go.Figure(
@@ -93,12 +96,24 @@ app.layout = html.Div([
                 go.Bar(x=names, y=densities, marker=dict(color="blue"), hoverinfo="x")
             ]
         )
-    )
+    ),
 
 ])
 
 
 
+# @app.callback(
+#     Output(component_id='my-div', component_property='children'),
+#     [Input(component_id='my-div', component_property='value')])
+# def display_value(dropdown_value):
+#     return 'balls'
+@app.callback(Output(component_id='my-div', component_property='children'), [Input("map", "clickData")])
+def update_selected_data(clickData):
+    # if clickData:
+    #     return {"points": []}
+    if clickData != None:
+        print(names[clickData['points'][0]['pointIndex']])
+    return "test"
 
 
 if __name__ == '__main__':
