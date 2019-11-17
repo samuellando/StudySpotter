@@ -125,7 +125,7 @@ def srequest_from_id(srequest_id):
 
     # parsing JSON for specific view
     loc_name = specific_view_obj['name']
-    loc_description = specific_view_obj['dsc']
+    loc_description = "'"+specific_view_obj['dsc']+"'"
     loc_businness = float(densities[ids.index(srequest_id)])
     if loc_businness < 20:
         business_level = "empty"
