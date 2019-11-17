@@ -103,9 +103,18 @@ app.layout = html.Div([
 def update_selected_data(clickData):
     if clickData != None:
         requestID = ids[clickData['points'][0]['pointIndex']]
-        r = requests.get('http://35.232.203.137?location=' + requestID , auth=('user', 'pass'))
-        y = r.json()
-        print(y)
+        specific_view_request = requests.get('http://35.232.203.137?location=' + requestID , auth=('user', 'pass'))
+        specific_view_obj = specific_view_request.json()
+
+        # parsing JSON for specific view
+        loc_name = specific_view_obj['name']
+        loc_description = specific_view_obj['dsc']
+        for label in specific_view_obj['labels']:
+            label_name = label
+            label_data = specific_view_obj['labels'][label]['data']
+            label_avg = specific_view_obj['labels'][label]['avg']
+            # TODO: PLOT GRAPH FOR THIS LABEL
+
     return "test"
 
 
