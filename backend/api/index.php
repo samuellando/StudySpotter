@@ -30,7 +30,7 @@ if (isset($_POST['location']) && isset($_POST['label'])) {
             label VARCHAR(255)
         );";
         $conn->query($sql);
-        $sql = "INSERT INTO locations (id, name, dsc, lat, lng, avg) VALUES ('$loc', '$name', '$dsc', $lat, $lng, 0)";
+        $sql = "INSERT INTO locations (id, name, dsc, lat, lng, avg) VALUES ('$loc', '$name', '$dsc', $lat, $lng, -1)";
         $conn->query($sql);
     }
     // Import the new data.
@@ -49,14 +49,23 @@ if (isset($_POST['location']) && isset($_POST['label'])) {
        exit();
     }
     // Now compute the avg for the location.
-    $sql = "SELECT avg locations WHERE id='$loc'";
+    $sql = "SELECT avg FROM locations WHERE id='$loc'";
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $avg = $row['avg'];
     }
-    $avg = ($avg + sizeof($data['macs'])) / 2;
-    $density = sizeof($data['macs']) / $avg * 100;
+    $min = $data['last'][0];
+    $max = $data['last'][0];
+    for ($i = 1; $i < sizeof($data['last']); $i++) {
+        if ($data['last'][$i] > $max) $max = $data['last'][$i];
+        if ($data['last'][$i] < $min) $min = $data['last'][$i];
+    }
+    if ($avg != -1)
+        $avg = intdiv(($avg + sizeof($data['macs'])), 2);
+    else
+        $avg = sizeof($data['macs']);
+    $density = 20;//intdiv(sizeof($data['macs']),  $avg) * 100;
     $sql = "UPDATE locations SET avg='$avg', density='$density' WHERE id='$loc'";
     if ($conn->query($sql) === TRUE) {
        echo '{"status": "good"}';
