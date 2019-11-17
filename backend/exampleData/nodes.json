@@ -3,7 +3,7 @@
         {
             "id": "mcgilltrottier",
             "name": "McGill Trottier Building",
-            "dsc": "Inaugurated in 2004",
+            "dsc": "Building for electrical engineering, computer science and telecommunications programs",
             "lat": 45.507331,
             "lng": -73.578931,
             "label": "First floor"
@@ -11,7 +11,7 @@
         {
             "id": "mcgilltrottier",
             "name": "McGill Trottier Building",
-            "dsc": "Inaugurated in 2004",
+            "dsc": "Building for electrical engineering, computer science and telecommunications programs",
             "lat": 45.507331,
             "lng": -73.578931,
             "label": "Second floor"
@@ -19,7 +19,7 @@
         {
             "id": "mcgilltrottier",
             "name": "McGill Trottier Building",
-            "dsc": "Inaugurated in 2004",
+            "dsc": "Building for electrical engineering, computer science and telecommunications programs",
             "lat": 45.507331,
             "lng": -73.578931,
             "label": "Third floor"
@@ -27,7 +27,7 @@
         {
             "id": "mcgilltrottier",
             "name": "McGill Trottier Building",
-            "dsc": "Inaugurated in 2004",
+            "dsc": "Building for electrical engineering, computer science and telecommunications programs",
             "lat": 45.507331,
             "lng": -73.578931,
             "label": "Forth floor"
@@ -38,15 +38,7 @@
             "dsc": "Lots of Math and Science study areas.",
             "lat": 45.504618,
             "lng": -73.574973,
-            "label": "Math Lounge"
-        },
-        {
-            "id": "mcgillburnside",
-            "name": "McGill Burnside Hall",
-            "dsc": "Lots of Math and Science study areas.",
-            "lat": 45.504618,
-            "lng": -73.574973,
-            "label": "Third Floor"
+            "label": "Basement"
         },
         {
             "id": "mcgillburnside",
@@ -62,7 +54,7 @@
             "dsc": "Lots of Math and Science study areas.",
             "lat": 45.504618,
             "lng": -73.574973,
-            "label": "Ninth floor"
+            "label": "Eleventh Floor"
         },
         {
             "id": "mcgillmcleannan",
@@ -87,14 +79,6 @@
             "lat": 45.503237,
             "lng": -73.575760,
             "label": "Third floor"
-        },
-        {
-            "id": "mcgillmcleannan",
-            "name": "McGill McLennan Library Building",
-            "dsc": "Largest library on campus.",
-            "lat": 45.503237,
-            "lng": -73.575760,
-            "label": "Forth floor"
         },
         {
             "id": "mcgillmcleannan",
