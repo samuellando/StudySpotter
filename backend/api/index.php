@@ -83,7 +83,7 @@ if (isset($_GET["location"])) {
             $labels[$row['label']] = 1;
         }
     }
-    $data = array('location'=>$loc, 'name'=>$name, 'dsc'=>$dsc);
+    $data = array('id'=>$loc, 'name'=>$name, 'dsc'=>$dsc);
     foreach ($labels as $key => $value) {
         $sql = "SELECT * FROM $loc where label='$key'";
         $result = $conn->query($sql);
