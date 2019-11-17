@@ -36,21 +36,19 @@ list_of_locations = {
 
 r = requests.get('http://35.232.203.137', auth=('user', 'pass'))
 y = r.json()
-print(y)
 
 names = []
 lats = []
 lngs = []
 densities = []
+ids =  []
 
 for location in y['locations']:
     names.append(location['name'])
     lats.append(float(location['lat']))
     lngs.append(float(location['lng']))
     densities.append(int(location['density']))
-
-print(names)
-print(densities)
+    ids.append(location['id'])
 
 app.layout = html.Div([
     html.Div([
@@ -101,18 +99,13 @@ app.layout = html.Div([
 ])
 
 
-
-# @app.callback(
-#     Output(component_id='my-div', component_property='children'),
-#     [Input(component_id='my-div', component_property='value')])
-# def display_value(dropdown_value):
-#     return 'balls'
 @app.callback(Output(component_id='my-div', component_property='children'), [Input("map", "clickData")])
 def update_selected_data(clickData):
-    # if clickData:
-    #     return {"points": []}
     if clickData != None:
-        print(names[clickData['points'][0]['pointIndex']])
+        requestID = ids[clickData['points'][0]['pointIndex']]
+        r = requests.get('http://35.232.203.137?location=' + requestID , auth=('user', 'pass'))
+        y = r.json()
+        print(y)
     return "test"
 
 
