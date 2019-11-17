@@ -98,8 +98,9 @@ if (isset($_GET["location"])) {
         }
     }
     $data = array('id'=>$loc, 'name'=>$name, 'dsc'=>$dsc);
+    $start = strtotime("today", $timestamp) - 5*3600;
     foreach ($labels as $key => $value) {
-        $sql = "SELECT * FROM $loc where label='$key'";
+        $sql = "SELECT * FROM $loc WHERE label='$key' AND last>'$start'";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             $counts = array();
