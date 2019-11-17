@@ -30,10 +30,8 @@ if (isset($_POST['location']) && isset($_POST['label'])) {
             label VARCHAR(255)
         );";
         $conn->query($sql);
-        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-        $sql = "INSERT INTO locations (id, name, dsc, lat, lng, avg) VALUES ('$loc', '$name', '$dsc', $lat, $lng, 0)";
+        $sql = "INSERT INTO locations (id, name, dsc, lat, lng, avg) VALUES ('$loc', '$name', '$dsc', $lat, $lng, -1)";
         $conn->query($sql);
-        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
     }
     // Import the new data.
     $json = $_POST['data'];
@@ -47,23 +45,32 @@ if (isset($_POST['location']) && isset($_POST['label'])) {
         $sql .= "('$mac', $last, $power, '$lab')";
     }
     if ($i > 0 && $conn->query($sql) !== TRUE) {
-       echo "{'status': 'bad'}";
+       echo '{"status": "bad"}';
        exit();
     }
     // Now compute the avg for the location.
-    $sql = "SELECT avg locations WHERE id='$loc'";
+    $sql = "SELECT avg FROM locations WHERE id='$loc'";
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $avg = $row['avg'];
     }
-    $avg = ($avg + sizeof($data['macs'])) / 2;
-    $density = sizeof($data['macs']) / $avg * 100;
+    $min = $data['last'][0];
+    $max = $data['last'][0];
+    for ($i = 1; $i < sizeof($data['last']); $i++) {
+        if ($data['last'][$i] > $max) $max = $data['last'][$i];
+        if ($data['last'][$i] < $min) $min = $data['last'][$i];
+    }
+    if ($avg != -1)
+        $avg = intdiv(($avg + sizeof($data['macs'])), 2);
+    else
+        $avg = sizeof($data['macs']);
+    $density = intdiv(sizeof($data['macs']),  $avg) * 100;
     $sql = "UPDATE locations SET avg='$avg', density='$density' WHERE id='$loc'";
     if ($conn->query($sql) === TRUE) {
-       echo "{'status': 'good'}";
+       echo '{"status": "good"}';
     } else {
-       echo "{'status': 'bad'}";
+       echo '{"status": "bad"}';
     }
     exit();
 }
@@ -91,16 +98,24 @@ if (isset($_GET["location"])) {
         }
     }
     $data = array('id'=>$loc, 'name'=>$name, 'dsc'=>$dsc);
+    $start = strtotime("today", $timestamp) - 5*3600;
     foreach ($labels as $key => $value) {
-        $sql = "SELECT * FROM $loc where label='$key'";
+        $sql = "SELECT * FROM $loc WHERE label='$key' AND last>'$start'";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
-            $points = array();
-            $avgs = array();
+            $counts = array();
             while($row = $result->fetch_assoc()) {
                 $last = $row['last'];
-                $block = intdiv((time() - intval($last)), (30*60));
-                $points[$block] = $points[$block] + 1;
+                $block = intdiv(((time() - 5*3600) - intval($last)), (30*60));
+                $counts[$block] = $counts[$block] + 1;
+            }
+            $points = array();
+            $avgs = array();
+            foreach ($counts as $k => $v) {
+               $points[] = $v;
+            }
+            while (sizeof($points) < 48) {
+                $points[] = 0;
             }
             for ($i = 0; $i < 48; $i++) {
                $avgs[$i] = $avg; 
