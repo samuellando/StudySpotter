@@ -87,26 +87,26 @@ for location in y['locations']:
 
 app.layout = html.Div(
     children=[
-        # searchbar
-        html.Div([
-            dcc.Dropdown(
-                id = 'search-dropdown',
-                options=dropdown_options,
-                placeholder= "Select a Library",
-            )
-        ], style={
-            'position' : 'absolute',
-            'z-index' : '2',
-            'width' : '30vw',
-            'margin' : '10px 10px 10px 10px'
-        }), 
         html.Div(
             className="row",
             children=[
                 # Column for user controls
                 html.Div(
                     className="four columns div-user-controls",
-                    children=[ html.Div(id='sidebar', style = {'overflow-y': 'auto', 'height' : '85vh'})],
+                    children=[
+                        html.H1("StudySpotter"),
+                        # searchbar
+                        html.Div([
+                            dcc.Dropdown(
+                                id = 'search-dropdown',
+                                options=dropdown_options,
+                                placeholder= "Select a Library",
+                            )
+                        ], style={
+                        }), 
+                        # sidebar
+                        html.Div(id='sidebar', style = {'overflow-y': 'auto', 'height' : '85vh', 'margin' : "0 auto"})
+                     ],
                 ),
                 # Column for app graphs and plots
                 html.Div(
@@ -122,6 +122,46 @@ app.layout = html.Div(
         )
     ]
 )
+
+    # FUNCTIONS
+
+def srequest_from_id(srequest_id):
+    specific_view_request = requests.get('http://35.232.203.137?location=' + srequest_id , auth=('user', 'pass'))
+    specific_view_obj = specific_view_request.json()
+
+    # parsing JSON for specific view
+    loc_name = specific_view_obj['name']
+    loc_description = specific_view_obj['dsc']
+
+    graphs = [
+        html.Div(children=[html.H1(loc_name), html.P(loc_description)])
+    ]
+    for label in specific_view_obj['labels']:
+        label_name = label
+        label_data = specific_view_obj['labels'][label]['data']
+        label_avg = specific_view_obj['labels'][label]['avg']
+        graphs.append(
+            dcc.Graph(
+                figure={
+                    'data': [
+                        {'x': time_axis, 'y': label_data, 'type': 'bar', 'name': 'Current'},
+                        {'x': time_axis, 'y': label_avg, 'type': 'line', 'name': 'Avg'},
+                    ],
+                    'layout': {
+                        'plot_bgcolor': 'rgba(0,0,0,0)',
+                        'paper_bgcolor': 'rgba(0,0,0,0)',
+                        'font': {
+                            'color': 'white'
+                        },
+                        'showlegend': False,
+                        'title' : label_name
+                    },
+                },
+                style={'height': 300}
+            )
+        )
+        # print(graphs)
+    return graphs
 
     # CALLBACK EVENTS
 
@@ -180,46 +220,11 @@ def goto_location(selected_value):
 def update_selected_data(clickData):
     if clickData != None:
         requestID = ids[clickData['points'][0]['pointIndex']]
-        specific_view_request = requests.get('http://35.232.203.137?location=' + requestID , auth=('user', 'pass'))
-        specific_view_obj = specific_view_request.json()
-
-        # parsing JSON for specific view
-        loc_name = specific_view_obj['name']
-        loc_description = specific_view_obj['dsc']
-
-        graphs = [
-            html.Div(children=[html.H1(loc_name), html.H4(loc_description)], style = {'color' : colors['text'], 'margin' : '0px 0px 0px 0px', 'font-family' : ' Arial', 'padding' : '10px 10px 10px 10px'})
-        ]
-        for label in specific_view_obj['labels']:
-            label_name = label
-            label_data = specific_view_obj['labels'][label]['data']
-            label_avg = specific_view_obj['labels'][label]['avg']
-            graphs.append(
-                dcc.Graph(
-                    figure={
-                        'data': [
-                            {'x': time_axis, 'y': label_data, 'type': 'bar', 'name': 'Current'},
-                            {'x': time_axis, 'y': label_avg, 'type': 'line', 'name': 'Avg'},
-                        ],
-                        'layout': {
-                            'plot_bgcolor': 'rgba(0,0,0,0)',
-                            'paper_bgcolor': 'rgba(0,0,0,0)',
-                            'font': {
-                                'color': colors['text']
-                            },
-                            'showlegend': False,
-                            'title' : label_name
-                        },
-                    },
-                    style={'height': 300}
-                )
-            )
-            # print(graphs)
-        return graphs
+        return srequest_from_id(requestID)
 
     else : #default landing thing
         return [
-            html.H1("StudySpotter")
+            html.P("blah blah blah blah blah"),
         ]
 
 if __name__ == "__main__":
