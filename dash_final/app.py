@@ -11,7 +11,7 @@ from datetime import datetime as dt
 
 import json
 import requests
-print('das')
+
 app = dash.Dash(
     __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}]
 )
@@ -81,7 +81,7 @@ for location in y['locations']:
     lngs.append(float(location['lng']))
     densities.append(int(location['density']))
     ids.append(location['id'])
-    dropdown_options.append({'label': location['name'], 'value': location['lat'] + "," + location['lng']})
+    dropdown_options.append({'label': location['name'], 'value': json.dumps({'id' : location['id'], 'lat' : location['lat'], 'lng' : location['lng']}) })
 
     # LAYOUT
 
@@ -169,11 +169,10 @@ def srequest_from_id(srequest_id):
 @app.callback(Output(component_id='map', component_property='figure'), [Input(component_id='search-dropdown', component_property='value')])
 def goto_location(selected_value):
     if selected_value:
+        selected_value_dict = json.loads(selected_value)
         new_zoom = 15
-        selected_value_list = selected_value.split(",")
-        print(selected_value_list)
-        new_latitude = float(selected_value_list[0])
-        new_longitude = float(selected_value_list[1])
+        new_latitude = float(selected_value_dict['lat'])
+        new_longitude = float(selected_value_dict['lng'])
     else :
         new_zoom = 12
         new_latitude = 45.507553
@@ -216,11 +215,15 @@ def goto_location(selected_value):
     )
 
 # map marker click callback event
-@app.callback(Output(component_id='sidebar', component_property='children'), [Input("map", "clickData")])
-def update_selected_data(clickData):
-    if clickData != None:
+@app.callback(Output(component_id='sidebar', component_property='children'), [Input("map", "clickData"), Input(component_id='search-dropdown', component_property='value')])
+def update_selected_data(clickData, selected_value):
+    if clickData:
         requestID = ids[clickData['points'][0]['pointIndex']]
         return srequest_from_id(requestID)
+
+    elif selected_value:
+        selected_value_dict = json.loads(selected_value)
+        return srequest_from_id(selected_value_dict['id'])
 
     else : #default landing thing
         return [
