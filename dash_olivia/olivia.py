@@ -29,12 +29,18 @@ list_of_locations = {
 
 
 #json_test = '{"id" : "0", "name": "Trottier Building", "lat": 45.507603, "lon" : -73.578973, "density" : 71}'
-
+#r = requests.get('http://35.232.203.137?location=concordiaev', auth=('user', 'pass'))
+#y = r.json()
+#print(r)
+#exit()
 #print(y["id"])
 #response.content
 
-
+r1 = requests.get('http://35.232.203.137?location=mcgilltrotier',auth=('user', 'pass'))
 r = requests.get('http://35.232.203.137', auth=('user', 'pass'))
+
+
+
 y = r.json()
 print(y)
 
@@ -43,6 +49,7 @@ lats = []
 lngs = []
 densities = []
 
+#get data from json 
 for location in y['locations']:
     names.append(location['name'])
     lats.append(float(location['lat']))
@@ -52,6 +59,9 @@ for location in y['locations']:
 print(names)
 print(densities)
 
+
+
+
 app.layout = html.Div([
     html.Div([
         dcc.Dropdown(
@@ -59,7 +69,7 @@ app.layout = html.Div([
                 {'label': 'McGill Trottier', 'value': 'mcgilltrotier'},
                 {'label': 'Concordia EV', 'value': 'concordiaev'},
             ],
-            placeholder="Select a Library",
+            placeholder= "Select a Library",
         )
     ]), 
     
@@ -69,6 +79,9 @@ app.layout = html.Div([
                 Scattermapbox(
                     lat=lats,
                     lon=lngs,
+                    mode="markers",
+                    hoverinfo="text",
+                    text=names,
                 )
             ],
             
@@ -83,18 +96,10 @@ app.layout = html.Div([
                     bearing=0,
                     zoom=12,
                 )
-            ),
-        )
+            )
+        ),
+        style={"height":"1000px"}
     ),
-
-    dcc.Graph(
-        figure=go.Figure(
-            data=[
-                go.Bar(x=names, y=densities, marker=dict(color="blue"), hoverinfo="x")
-            ]
-        )
-    )
-
 ])
 
 
