@@ -65,7 +65,7 @@ if (isset($_POST['location']) && isset($_POST['label'])) {
         $avg = intdiv(($avg + sizeof($data['macs'])), 2);
     else
         $avg = sizeof($data['macs']);
-    $density = 20;//intdiv(sizeof($data['macs']),  $avg) * 100;
+    $density = intdiv(sizeof($data['macs']),  $avg) * 100;
     $sql = "UPDATE locations SET avg='$avg', density='$density' WHERE id='$loc'";
     if ($conn->query($sql) === TRUE) {
        echo '{"status": "good"}';
