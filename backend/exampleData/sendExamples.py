@@ -41,21 +41,30 @@ for node in NODES:
     if r.json()['status'] != 'good':
       print("BAD POST")
       exit()
-print(i)
-while True:
-  print("Sleeping....")
-  time.sleep(1800)
-  for j in range(0, int(n[i])):
-    mac.append("FF:FF:FF:FF")
-    last.append(START_OF_DAY + 1800 * i - 5*3600)
-    power.append(random.randint(-1, 20))
 
-  df = json.dumps({"macs":mac, "last":last, "power":power})
-  params = {**node, "data":df}
-  params['location'] = params['id']
-  del params['id']
-  r = requests.post(url=URL, data=params)
-  if r.json()['status'] != 'good':
-    print("BAD POST")
-    exit()
-  i = i+1
+i = i + 1
+while True:
+  print(i)
+  print("Sleeping...")
+  time.sleep(10)
+  for node in NODES:
+    mac = []
+    last=[]
+    power=[]
+
+    n = numpy.random.normal(loc=100.00, scale=30.00, size=blocks)[0]
+
+    for j in range(0, int(n)):
+      mac.append("FF:FF:FF:FF")
+      last.append(START_OF_DAY + 1800 * i - 5*3600)
+      power.append(random.randint(-1, 20))
+
+    df = json.dumps({"macs":mac, "last":last, "power":power})
+    params = {**node, "data":df}
+    params['location'] = params['id']
+    del params['id']
+    r = requests.post(url=URL, data=params)
+    if r.json()['status'] != 'good':
+      print("BAD POST")
+      exit()
+  i = i + 1
