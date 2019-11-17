@@ -21,33 +21,22 @@ app = dash.Dash(
 )
 server = app.server
 mapbox_access_token = "pk.eyJ1IjoicGxvdGx5bWFwYm94IiwiYSI6ImNqdnBvNDMyaTAxYzkzeW5ubWdpZ2VjbmMifQ.TXcBE-xg9BFdV2ocecc_7g"
-list_of_locations = {
-    "Trottier": {"lat": 45.507553,"lon": -73.578995},
-    "Webster Library": {"lat": 45.497355,"lon": -73.578129},
-}
 
-
-
-#json_test = '{"id" : "0", "name": "Trottier Building", "lat": 45.507603, "lon" : -73.578973, "density" : 71}'
-#r = requests.get('http://35.232.203.137?location=concordiaev', auth=('user', 'pass'))
-#y = r.json()
-#print(r)
-#exit()
-#print(y["id"])
-#response.content
-
-r1 = requests.get('http://35.232.203.137?location=mcgilltrotier',auth=('user', 'pass'))
 r = requests.get('http://35.232.203.137', auth=('user', 'pass'))
-
-
-
 y = r.json()
 
+# map generation variables
 names = []
 lats = []
 lngs = []
 densities = []
 ids =  []
+new_zoom = 12
+new_latitude = 45.507553
+new_longitude = -73.578129
+
+# dropdown array
+dropdown_options = []
 
 #get data from json 
 for location in y['locations']:
@@ -56,22 +45,19 @@ for location in y['locations']:
     lngs.append(float(location['lng']))
     densities.append(int(location['density']))
     ids.append(location['id'])
-
-
+    dropdown_options.append({'label': location['name'], 'value': location['lat'] + "," + location['lng']})
 
 
 app.layout = html.Div([
     html.Div([
         dcc.Dropdown(
-            options=[
-                {'label': 'McGill Trottier', 'value': 'mcgilltrotier'},
-                {'label': 'Concordia EV', 'value': 'concordiaev'},
-            ],
+            id = 'search-dropdown',
+            options=dropdown_options,
             placeholder= "Select a Library",
         )
     ]), 
     
-    
+    # Creating the map WHENEVER A CHANGE IS MADE TO THIS CHANGE THE GRAPH IN THE goto_location function!!!!
     dcc.Graph(
         id = "map",
         figure=go.Figure(
@@ -102,14 +88,14 @@ app.layout = html.Div([
                 showlegend=False,
                 mapbox=dict(
                     accesstoken=mapbox_access_token,
-                    center=dict(lat=list_of_locations["Trottier"]["lat"], lon=list_of_locations["Trottier"]["lon"]),  # 40.7272  # -73.991251
+                    center=dict(lat=new_latitude, lon=new_longitude), # Trottier
                     style="dark",
                     bearing=0,
-                    zoom=12,
+                    zoom=new_zoom,
                 )
             )
         ),
-        style={"height":"1000px"}
+        style={"height":"700px"}
     ),
 
     html.Div(id='my-div'),
@@ -124,7 +110,56 @@ app.layout = html.Div([
 
 ])
 
+# search bar callback event
+@app.callback(Output(component_id='map', component_property='figure'), [Input(component_id='search-dropdown', component_property='value')])
+def goto_location(selected_value):
+    if selected_value:
+        new_zoom = 15
+        selected_value_list = selected_value.split(",")
+        new_latitude = float(selected_value_list[0])
+        new_longitude = float(selected_value_list[1])
+    else :
+        new_zoom = 12
+        new_latitude = 45.507553
+        new_longitude = -73.578129
 
+    return go.Figure(
+        data=[  
+            Scattermapbox(
+                lat=lats,
+                lon=lngs,
+                mode="markers",
+                hoverinfo="text",
+                text=names,
+                marker= go.scattermapbox.Marker(
+                    size=10,
+                    cmin = 0,
+                    cmax = 100,
+                    showscale=False,
+                    color = densities,
+                    colorscale= [[0, 'rgb(0,255,0)'], [1, 'rgb(255,0,0)']],
+
+                    #opacity=0.3,
+                    # symbol = 'circle',
+                ),
+            )
+        ],
+        
+        layout=Layout(
+            autosize=True,
+            margin=go.layout.Margin(l=0, r=35, t=0, b=0),
+            showlegend=False,
+            mapbox=dict(
+                accesstoken=mapbox_access_token,
+                center=dict(lat=new_latitude, lon=new_longitude), # A new Location
+                style="dark",
+                bearing=0,
+                zoom=new_zoom,
+            )
+        )
+    )
+
+# map marker click callback event
 @app.callback(Output(component_id='my-div', component_property='children'), [Input("map", "clickData")])
 def update_selected_data(clickData):
     if clickData != None:
@@ -142,7 +177,7 @@ def update_selected_data(clickData):
             # TODO: PLOT GRAPH FOR THIS LABEL
 
 
-    return "test"
+    return ""
 
 
 if __name__ == '__main__':
