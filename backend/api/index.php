@@ -30,10 +30,8 @@ if (isset($_POST['location']) && isset($_POST['label'])) {
             label VARCHAR(255)
         );";
         $conn->query($sql);
-        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
         $sql = "INSERT INTO locations (id, name, dsc, lat, lng, avg) VALUES ('$loc', '$name', '$dsc', $lat, $lng, 0)";
         $conn->query($sql);
-        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
     }
     // Import the new data.
     $json = $_POST['data'];
@@ -47,7 +45,7 @@ if (isset($_POST['location']) && isset($_POST['label'])) {
         $sql .= "('$mac', $last, $power, '$lab')";
     }
     if ($i > 0 && $conn->query($sql) !== TRUE) {
-       echo "{'status': 'bad'}";
+       echo '{"status": "bad"}';
        exit();
     }
     // Now compute the avg for the location.
@@ -61,9 +59,9 @@ if (isset($_POST['location']) && isset($_POST['label'])) {
     $density = sizeof($data['macs']) / $avg * 100;
     $sql = "UPDATE locations SET avg='$avg', density='$density' WHERE id='$loc'";
     if ($conn->query($sql) === TRUE) {
-       echo "{'status': 'good'}";
+       echo '{"status": "good"}';
     } else {
-       echo "{'status': 'bad'}";
+       echo '{"status": "bad"}';
     }
     exit();
 }
