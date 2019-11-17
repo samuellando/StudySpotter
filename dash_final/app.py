@@ -235,7 +235,7 @@ def update_selected_data(clickData, selected_value):
 
     else : #default landing thing
         return [
-            html.P("blah blah blah blah blah"),
+            html.P("Some study spaces are more full than others, but which one is more full? Good question! Our app can show and predict how busy the libraries are, and make recommendations based on real time and predicted population densities. So people can better use the spaces. "),
         ]
 
 if __name__ == "__main__":
