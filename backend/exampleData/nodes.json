@@ -95,6 +95,46 @@
             "lat": 45.503237,
             "lng": -73.575760,
             "label": "Sixth floor"
+        },
+        {
+            "id": "concordialibrary",
+            "name": "Concordia Webster Library",
+            "dsc": "Largest library on campus.",
+            "lat": 45.496870, 
+            "lng": -73.578110,
+            "label": "First floor"
+        },
+        {
+            "id": "concordialibrary",
+            "name": "Concordia Webster Library",
+            "dsc": "Largest library on campus.",
+            "lat": 45.496870, 
+            "lng": -73.578110,
+            "label": "Second floor"
+        },
+        {
+            "id": "concordialibrary",
+            "name": "Concordia Webster Library",
+            "dsc": "Largest library on campus.",
+            "lat": 45.496870, 
+            "lng": -73.578110,
+            "label": "Third floor"
+        },
+        {
+            "id": "concordialibrary",
+            "name": "Concordia Webster Library",
+            "dsc": "Largest library on campus.",
+            "lat": 45.496870, 
+            "lng": -73.578110,
+            "label": "Forth floor"
+        },
+        {
+            "id": "concordialibrary",
+            "name": "Concordia Webster Library",
+            "dsc": "Largest library on campus.",
+            "lat": 45.496870, 
+            "lng": -73.578110,
+            "label": "Fifth floor"
         }
     ]
 }
