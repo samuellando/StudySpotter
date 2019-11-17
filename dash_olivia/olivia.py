@@ -17,7 +17,7 @@ from plotly.graph_objs import *
 from datetime import datetime as dt
 
 app = dash.Dash(
-    __name__
+    __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}]
 )
 server = app.server
 mapbox_access_token = "pk.eyJ1IjoicGxvdGx5bWFwYm94IiwiYSI6ImNqdnBvNDMyaTAxYzkzeW5ubWdpZ2VjbmMifQ.TXcBE-xg9BFdV2ocecc_7g"
@@ -48,54 +48,24 @@ for location in y['locations']:
     dropdown_options.append({'label': location['name'], 'value': location['lat'] + "," + location['lng']})
 
 
-app.layout = html.Div([
+app.layout = html.Div(className = "row", children=[
     html.Div([
         dcc.Dropdown(
             id = 'search-dropdown',
             options=dropdown_options,
             placeholder= "Select a Library",
         )
-    ]), 
+    ], style={
+        'position' : 'absolute',
+        'z-index' : '2',
+        'width' : '30vw',
+        'margin' : '10px 10px 10px 10px'
+    }), 
     
-    # Creating the map WHENEVER A CHANGE IS MADE TO THIS CHANGE THE GRAPH IN THE goto_location function!!!!
+    # Creating the map element
     dcc.Graph(
-        id = "map",
-        figure=go.Figure(
-            data=[  
-                Scattermapbox(
-                    lat=lats,
-                    lon=lngs,
-                    mode="markers",
-                    hoverinfo="text",
-                    text=names,
-                    marker= go.scattermapbox.Marker(
-                        size=10,
-                        cmin = 0,
-                        cmax = 100,
-                        showscale=False,
-                        color = densities,
-                        colorscale= [[0, 'rgb(0,255,0)'], [1, 'rgb(255,0,0)']],
-
-                        #opacity=0.3,
-                        # symbol = 'circle',
-                    ),
-                )
-            ],
-            
-            layout=Layout(
-                autosize=True,
-                margin=go.layout.Margin(l=0, r=35, t=0, b=0),
-                showlegend=False,
-                mapbox=dict(
-                    accesstoken=mapbox_access_token,
-                    center=dict(lat=new_latitude, lon=new_longitude), # Trottier
-                    style="dark",
-                    bearing=0,
-                    zoom=new_zoom,
-                )
-            )
-        ),
-        style={"height":"700px"}
+        id = "map",  
+        style={"height":"100vh", "width": "100%"}
     ),
 
     html.Div(id='my-div'),
@@ -116,6 +86,7 @@ def goto_location(selected_value):
     if selected_value:
         new_zoom = 15
         selected_value_list = selected_value.split(",")
+        print(selected_value_list)
         new_latitude = float(selected_value_list[0])
         new_longitude = float(selected_value_list[1])
     else :
@@ -147,7 +118,7 @@ def goto_location(selected_value):
         
         layout=Layout(
             autosize=True,
-            margin=go.layout.Margin(l=0, r=35, t=0, b=0),
+            margin=go.layout.Margin(l=0, r=0, t=0, b=0),
             showlegend=False,
             mapbox=dict(
                 accesstoken=mapbox_access_token,
