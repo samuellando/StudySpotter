@@ -42,12 +42,12 @@ r = requests.get('http://35.232.203.137', auth=('user', 'pass'))
 
 
 y = r.json()
-print(y)
 
 names = []
 lats = []
 lngs = []
 densities = []
+ids =  []
 
 #get data from json 
 for location in y['locations']:
@@ -55,9 +55,7 @@ for location in y['locations']:
     lats.append(float(location['lat']))
     lngs.append(float(location['lng']))
     densities.append(int(location['density']))
-
-print(names)
-print(densities)
+    ids.append(location['id'])
 
 
 
@@ -73,7 +71,9 @@ app.layout = html.Div([
         )
     ]), 
     
+    
     dcc.Graph(
+        id = "map",
         figure=go.Figure(
             data=[  
                 Scattermapbox(
@@ -100,10 +100,30 @@ app.layout = html.Div([
         ),
         style={"height":"1000px"}
     ),
+<<<<<<< HEAD
+=======
+    html.Div(id='my-div'),
+
+    dcc.Graph(
+        figure=go.Figure(
+            data=[
+                go.Bar(x=names, y=densities, marker=dict(color="blue"), hoverinfo="x")
+            ]
+        )
+    ),
+
+>>>>>>> 1d5181679ac87d2d3342c6644f56d5d25b30fe34
 ])
 
 
-
+@app.callback(Output(component_id='my-div', component_property='children'), [Input("map", "clickData")])
+def update_selected_data(clickData):
+    if clickData != None:
+        requestID = ids[clickData['points'][0]['pointIndex']]
+        r = requests.get('http://35.232.203.137?location=' + requestID , auth=('user', 'pass'))
+        y = r.json()
+        print(y)
+    return "test"
 
 
 if __name__ == '__main__':
