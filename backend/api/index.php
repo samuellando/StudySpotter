@@ -18,17 +18,22 @@ if (isset($_POST['location']) && isset($_POST['label'])) {
     // Create the tables if needed.
     $loc = $_POST['location'];
     $lab = $_POST['label'];
-    if (isset($_POST['name']) && isset($_POST['lat']) && isset($_POST['lng']) && isset($_POST['id']) && isset($_POST['dsc'])) {
+    if (isset($_POST['name']) && isset($_POST['lat']) && isset($_POST['lng']) && isset($_POST['dsc'])) {
         $name = $_POST['name'];
-        $id = $_POST['id'];
         $lat = $_POST['lat'];
         $lng = $_POST['lng'];
+        $dsc = $_POST['dsc'];
         $sql = "CREATE TABLE $loc (
             mac VARCHAR(225),
             last INT(255),
             power INT(255),
             label VARCHAR(255)
-        ); INSERT INTO locations (id, name, dsc, lat, lng, avg) VALUES ('$id', '$name', '$dsc', $lat, $lng, 0)";
+        );";
+        $conn->query($sql);
+        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+        $sql = "INSERT INTO locations (id, name, dsc, lat, lng, avg) VALUES ('$loc', '$name', '$dsc', $lat, $lng, 0)";
+        $conn->query($sql);
+        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
     }
     // Import the new data.
     $json = $_POST['data'];
