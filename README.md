@@ -11,7 +11,7 @@ Some study spaces are more full than others, but which one is more full? Good qu
 
 ## How I built it
 ### The data pipeline
-![The pipline]("http://samuellando.com/pipeline.png")
+![The pipline](http://samuellando.com/pipeline.png)
 
 In order to  capture a sense of how busy an area is. We decided to passively capture wireless network traffic in the form of wifi pings. These wifi pings are constantly transmitted by phones, laptops and other internet connected devices, and therefore can give us a relative sense of how busy a given location is through counting the number of unique MAC addresses.
 
