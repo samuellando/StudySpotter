@@ -1,6 +1,0 @@
-#!/bin/sh
-# This script transmits the data from the node to the processing/database server.
-# It is meant to be run in the directory where the data is being exported by the 
-# Monitor script
-
-# TODO
