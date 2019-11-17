@@ -100,8 +100,7 @@ app.layout = html.Div([
         ),
         style={"height":"1000px"}
     ),
-<<<<<<< HEAD
-=======
+
     html.Div(id='my-div'),
 
     dcc.Graph(
@@ -112,7 +111,6 @@ app.layout = html.Div([
         )
     ),
 
->>>>>>> 1d5181679ac87d2d3342c6644f56d5d25b30fe34
 ])
 
 
