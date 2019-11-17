@@ -68,7 +68,7 @@ if (isset($_POST['location']) && isset($_POST['label'])) {
         $mac = $data['macs'][$i];
         $last = $data['last'][$i];
         $power = $data['power'][$i];
-        $sql .= "INSERT INTO $loc (mac, last, power, label) VALUES ($mac, $last, $power)"
+        $sql .= "INSERT INTO $loc (mac, last, power, label) VALUES ($mac, $last, $power)";
     }
     if ($conn->query($sql) !== TRUE) {
        echo "{'status': 'bad'}";
@@ -141,7 +141,7 @@ if (isset($_GET["location"])) {
     $data = array();
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
-            $data["locations"][] = array('id'=>$row['id'], 'lat'=>$row['lat'], 'lng'=>$row['lng'], 'name'=>$row['name'], 'density'=>random_int(0, 100));
+            $data["locations"][] = array('id'=>$row['id'], 'lat'=>$row['lat'], 'lng'=>$row['lng'], 'name'=>$row['name'], 'density'=>$row['density']);
         }
     } else {
         $data["locations"] = "no data";
