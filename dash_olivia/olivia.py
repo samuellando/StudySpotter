@@ -35,6 +35,41 @@ new_zoom = 12
 new_latitude = 45.507553
 new_longitude = -73.578129
 
+# colors baby
+colors = {
+    'background': '#111111',
+    'text': '#7FDBFF'
+}
+
+# specific view generation vars
+
+time_axis = [
+    "01:00", "01:30", 
+    "02:00", "02:30", 
+    "03:00", "03:30", 
+    "04:00", "04:30", 
+    "05:00", "05:30", 
+    "06:00", "06:30", 
+    "07:00", "07:30", 
+    "08:00", "08:30", 
+    "09:00", "09:30", 
+    "10:00", "10:30", 
+    "11:00", "11:30", 
+    "12:00", "12:30", 
+    "13:00", "13:30", 
+    "14:00", "14:30", 
+    "15:00", "15:30", 
+    "16:00", "16:30", 
+    "17:00", "17:30", 
+    "18:00", "18:30", 
+    "19:00", "19:30", 
+    "20:00", "20:30", 
+    "21:00", "21:30", 
+    "22:00", "22:30", 
+    "23:00", "23:30", 
+    "24:00", "24:30", 
+]
+
 # dropdown array
 dropdown_options = []
 
@@ -49,6 +84,7 @@ for location in y['locations']:
 
 
 app.layout = html.Div(className = "row", children=[
+    # searchbar
     html.Div([
         dcc.Dropdown(
             id = 'search-dropdown',
@@ -61,22 +97,24 @@ app.layout = html.Div(className = "row", children=[
         'width' : '30vw',
         'margin' : '10px 10px 10px 10px'
     }), 
+
+    # sidebar
+    html.Div(id='sidebar', style = {
+        'position' : 'absolute',
+        'width' : '600px',
+        'height' : '100%',
+        'z-index' : '2',
+        'right' : '0',
+        'overflow-y': 'scroll',
+        'background-color' : colors['background']
+    }),
     
     # Creating the map element
     dcc.Graph(
         id = "map",  
-        style={"height":"100vh", "width": "100%"}
+        style={"height":"100vh", "width": "100%", "z-index" : 4},
     ),
 
-    html.Div(id='my-div'),
-
-    dcc.Graph(
-        figure=go.Figure(
-            data=[
-                go.Bar(x=names, y=densities, marker=dict(color="blue"), hoverinfo="x")
-            ]
-        )
-    ),
 
 ])
 
@@ -131,7 +169,7 @@ def goto_location(selected_value):
     )
 
 # map marker click callback event
-@app.callback(Output(component_id='my-div', component_property='children'), [Input("map", "clickData")])
+@app.callback(Output(component_id='sidebar', component_property='children'), [Input("map", "clickData")])
 def update_selected_data(clickData):
     if clickData != None:
         requestID = ids[clickData['points'][0]['pointIndex']]
@@ -141,14 +179,39 @@ def update_selected_data(clickData):
         # parsing JSON for specific view
         loc_name = specific_view_obj['name']
         loc_description = specific_view_obj['dsc']
+
+        graphs = [
+            html.Div(children=[html.H1(loc_name), html.H4(loc_description)], style = {'color' : colors['text'], 'margin' : '0px 0px 0px 0px', 'font-family' : ' Arial', 'padding' : '10px 10px 10px 10px'})
+        ]
         for label in specific_view_obj['labels']:
             label_name = label
             label_data = specific_view_obj['labels'][label]['data']
             label_avg = specific_view_obj['labels'][label]['avg']
-            # TODO: PLOT GRAPH FOR THIS LABEL
+            graphs.append(
+                dcc.Graph(
+                    figure={
+                        'data': [
+                            {'x': time_axis, 'y': label_data, 'type': 'bar', 'name': 'Current'},
+                            {'x': time_axis, 'y': label_avg, 'type': 'line', 'name': 'Avg'},
+                        ],
+                        'layout': {
+                            'plot_bgcolor': colors['background'],
+                            'paper_bgcolor': colors['background'],
+                            'font': {
+                                'color': colors['text']
+                            },
+                            'showlegend': False,
+                            'title' : label_name
+                        },
+                    },
+                    style={'height': 500}
+                )
+            )
+            # print(graphs)
+        return graphs
 
-
-    return ""
+    else :
+        return ""
 
 
 if __name__ == '__main__':
