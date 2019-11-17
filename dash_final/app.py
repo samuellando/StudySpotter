@@ -99,7 +99,7 @@ app.layout = html.Div(
                         ], style={
                         }), 
                         # sidebar
-                        html.Div(id='sidebar', style = {'overflow-y': 'auto', 'height' : '85vh', 'margin' : "0 auto"})
+                        html.Div(id='sidebar', style = {'overflow-y': 'auto', 'height' : '80vh', 'margin' : "0 auto", 'scrollbar-color' : 'dark'})
                      ],
                 ),
                 # Column for app graphs and plots
@@ -162,7 +162,8 @@ def srequest_from_id(srequest_id):
                         'title' : label_name,
                         'yaxis':{
                              'title':'Density'
-                        }
+                        },
+
                     },
                 },
                 style={'height': 300}
@@ -235,7 +236,7 @@ def update_selected_data(clickData, selected_value):
 
     else : #default landing thing
         return [
-            html.P("Some study spaces are more full than others, but which one is more full? Good question! Our app can show and predict how busy the libraries are, and make recommendations based on real time and predicted population densities. So people can better use the spaces. "),
+            html.P("Some study spaces are more full than others, but which one is more full? Good question! Our app can show and predict how busy the libraries are, and make recommendations based on real time and predicted population densities. So people can better use the spaces. ", style = {'padding-top' : '14px'}),
         ]
 
 if __name__ == "__main__":

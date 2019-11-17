@@ -30,6 +30,10 @@ a {
   padding: 10px 10px 10px 10px;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 .bg-grey{
   background-color: #31302F;
 }
