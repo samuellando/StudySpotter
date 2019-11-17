@@ -27,7 +27,7 @@
         {
             "id": "mcgilltrottier",
             "name": "McGill Trottier Building",
-            "dsc": "Quiet study area",
+            "dsc": "Building for electrical engineering, computer science and telecommunications programs",
             "lat": 45.507331,
             "lng": -73.578931,
             "label": "Forth floor"
@@ -38,15 +38,7 @@
             "dsc": "Lots of Math and Science study areas.",
             "lat": 45.504618,
             "lng": -73.574973,
-            "label": "Math Lounge"
-        },
-        {
-            "id": "mcgillburnside",
-            "name": "McGill Burnside Hall",
-            "dsc": "Lots of Math and Science study areas.",
-            "lat": 45.504618,
-            "lng": -73.574973,
-            "label": "Third Floor"
+            "label": "Basement"
         },
         {
             "id": "mcgillburnside",
@@ -55,6 +47,14 @@
             "lat": 45.504618,
             "lng": -73.574973,
             "label": "Fifth Floor"
+        },
+        {
+            "id": "mcgillburnside",
+            "name": "McGill Burnside Hall",
+            "dsc": "Lots of Math and Science study areas.",
+            "lat": 45.504618,
+            "lng": -73.574973,
+            "label": "Eleventh Floor"
         },
         {
             "id": "mcgillmcleannan",
@@ -91,7 +91,7 @@
         {
             "id": "mcgillmcleannan",
             "name": "McGill McLennan Library Building",
-            "dsc": "Queit study area",
+            "dsc": "Largest library on campus.",
             "lat": 45.503237,
             "lng": -73.575760,
             "label": "Sixth floor"
