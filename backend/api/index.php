@@ -31,16 +31,17 @@ if (isset($_POST['location']) && isset($_POST['label'])) {
         ); INSERT INTO locations (id, name, dsc, lat, lng, avg) VALUES ('$id', '$name', '$dsc', $lat, $lng, 0)";
     }
     // Import the new data.
-    $json = $_SERVER['data'];
-    $data = json_decode($json);
-    $sql = "";
+    $json = $_POST['data'];
+    $data = json_decode($json, TRUE);
+    $sql = "INSERT INTO $loc (mac, last, power, label) VALUES ";
     for ($i = 0; $i < sizeof($data['macs']); $i++) {
+        if ($i > 0) $sql .= ", ";
         $mac = $data['macs'][$i];
         $last = $data['last'][$i];
         $power = $data['power'][$i];
-        $sql .= "INSERT INTO $loc (mac, last, power, label) VALUES ($mac, $last, $power)";
+        $sql .= "('$mac', $last, $power, '$lab')";
     }
-    if ($conn->query($sql) !== TRUE) {
+    if ($i > 0 && $conn->query($sql) !== TRUE) {
        echo "{'status': 'bad'}";
        exit();
     }
@@ -59,6 +60,7 @@ if (isset($_POST['location']) && isset($_POST['label'])) {
     } else {
        echo "{'status': 'bad'}";
     }
+    exit();
 }
 
 // GET requests from the frontend.
