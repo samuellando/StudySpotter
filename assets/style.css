@@ -14,7 +14,7 @@ h1, h2, h3, h4, h5 {
   font-weight: bold;
   letter-spacing: 2.1px;
   font-size: 21px;
-  padding-left: 12px;
+  /*padding-left: 12px;*/
 }
 p {
   font-family: "Open Sans";
@@ -25,6 +25,15 @@ p {
 a {
   text-decoration: none;
 }
+
+#sidebar {
+  padding: 10px 10px 10px 10px;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
 .bg-grey{
   background-color: #31302F;
 }
@@ -50,7 +59,7 @@ a {
 /* Graph Control Objects ––––––––––––––––––––––––––––––––––––––––––––––––––*/
 .div-user-controls {
   padding-left: 55px;
-  padding-top: 64px;
+  padding-top: 20px;
 }
 .div-for-dropdown {
   padding-top: 12px;

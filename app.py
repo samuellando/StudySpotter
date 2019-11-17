@@ -11,7 +11,7 @@ from datetime import datetime as dt
 
 import json
 import requests
-print('das')
+
 app = dash.Dash(
     __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}]
 )
@@ -35,12 +35,6 @@ ids =  []
 new_zoom = 12
 new_latitude = 45.507553
 new_longitude = -73.578129
-
-# colors baby
-colors = {
-    'background': '#111111',
-    'text': '#7FDBFF'
-}
 
 # specific view generation vars
 
@@ -81,32 +75,32 @@ for location in y['locations']:
     lngs.append(float(location['lng']))
     densities.append(int(location['density']))
     ids.append(location['id'])
-    dropdown_options.append({'label': location['name'], 'value': location['lat'] + "," + location['lng']})
+    dropdown_options.append({'label': location['name'], 'value': json.dumps({'id' : location['id'], 'lat' : location['lat'], 'lng' : location['lng']}) })
 
     # LAYOUT
 
 app.layout = html.Div(
     children=[
-        # searchbar
-        html.Div([
-            dcc.Dropdown(
-                id = 'search-dropdown',
-                options=dropdown_options,
-                placeholder= "Select a Library",
-            )
-        ], style={
-            'position' : 'absolute',
-            'z-index' : '2',
-            'width' : '30vw',
-            'margin' : '10px 10px 10px 10px'
-        }), 
         html.Div(
             className="row",
             children=[
                 # Column for user controls
                 html.Div(
                     className="four columns div-user-controls",
-                    children=[ html.Div(id='sidebar', style = {'overflow-y': 'auto', 'height' : '85vh'})],
+                    children=[
+                        html.H1("StudySpotter"),
+                        # searchbar
+                        html.Div([
+                            dcc.Dropdown(
+                                id = 'search-dropdown',
+                                options=dropdown_options,
+                                placeholder= "Select a Library",
+                            )
+                        ], style={
+                        }), 
+                        # sidebar
+                        html.Div(id='sidebar', style = {'overflow-y': 'auto', 'height' : '80vh', 'margin' : "0 auto", 'scrollbar-color' : 'dark'})
+                     ],
                 ),
                 # Column for app graphs and plots
                 html.Div(
@@ -123,21 +117,75 @@ app.layout = html.Div(
     ]
 )
 
+    # FUNCTIONS
+
+def srequest_from_id(srequest_id):
+    specific_view_request = requests.get('http://35.232.203.137?location=' + srequest_id , auth=('user', 'pass'))
+    specific_view_obj = specific_view_request.json()
+
+    # parsing JSON for specific view
+    loc_name = specific_view_obj['name']
+    loc_description = "'"+specific_view_obj['dsc']+"'"
+    loc_businness = float(densities[ids.index(srequest_id)])
+    if loc_businness < 20:
+        business_level = "empty"
+    elif 20 <= loc_businness and loc_businness < 40:
+        business_level = "chillaxed"
+    elif 40 <= loc_businness and loc_businness < 60:
+        business_level = "lively"
+    elif 60 <= loc_businness and loc_businness < 80:
+        business_level = "busy"
+    else:
+        business_level = "hellish"
+
+    graphs = [
+        html.Div(children=[html.H1(loc_name), html.P(loc_description), html.P(">"+business_level, style = {"font-style" : "italic"})])
+    ]
+    for label in specific_view_obj['labels']:
+        label_name = label
+        label_data = specific_view_obj['labels'][label]['data']
+        label_avg = specific_view_obj['labels'][label]['avg']
+        graphs.append(
+            dcc.Graph(
+                figure={
+                    'data': [
+                        {'x': time_axis, 'y': label_data, 'type': 'bar', 'name': 'Current'},
+                        {'x': time_axis, 'y': label_avg, 'type': 'line', 'name': 'Avg'},
+                    ],
+                    'layout': {
+                        'plot_bgcolor': 'rgba(0,0,0,0)',
+                        'paper_bgcolor': 'rgba(0,0,0,0)',
+                        'font': {
+                            'color': 'white'
+                        },
+                        'showlegend': False,
+                        'title' : label_name,
+                        'yaxis':{
+                             'title':'Density'
+                        },
+
+                    },
+                },
+                style={'height': 300}
+            )
+        )
+        # print(graphs)
+    return graphs
+
     # CALLBACK EVENTS
 
 # search bar callback event
 @app.callback(Output(component_id='map', component_property='figure'), [Input(component_id='search-dropdown', component_property='value')])
 def goto_location(selected_value):
     if selected_value:
+        selected_value_dict = json.loads(selected_value)
         new_zoom = 15
-        selected_value_list = selected_value.split(",")
-        print(selected_value_list)
-        new_latitude = float(selected_value_list[0])
-        new_longitude = float(selected_value_list[1])
+        new_latitude = float(selected_value_dict['lat'])
+        new_longitude = float(selected_value_dict['lng'])
     else :
-        new_zoom = 12
-        new_latitude = 45.507553
-        new_longitude = -73.578129
+        new_zoom = 12.3
+        new_latitude = 45.494477
+        new_longitude = -73.585914
 
     return go.Figure(
         data=[  
@@ -176,50 +224,19 @@ def goto_location(selected_value):
     )
 
 # map marker click callback event
-@app.callback(Output(component_id='sidebar', component_property='children'), [Input("map", "clickData")])
-def update_selected_data(clickData):
-    if clickData != None:
+@app.callback(Output(component_id='sidebar', component_property='children'), [Input("map", "clickData"), Input(component_id='search-dropdown', component_property='value')])
+def update_selected_data(clickData, selected_value):
+    if clickData:
         requestID = ids[clickData['points'][0]['pointIndex']]
-        specific_view_request = requests.get('http://35.232.203.137?location=' + requestID , auth=('user', 'pass'))
-        specific_view_obj = specific_view_request.json()
+        return srequest_from_id(requestID)
 
-        # parsing JSON for specific view
-        loc_name = specific_view_obj['name']
-        loc_description = specific_view_obj['dsc']
-
-        graphs = [
-            html.Div(children=[html.H1(loc_name), html.H4(loc_description)], style = {'color' : colors['text'], 'margin' : '0px 0px 0px 0px', 'font-family' : ' Arial', 'padding' : '10px 10px 10px 10px'})
-        ]
-        for label in specific_view_obj['labels']:
-            label_name = label
-            label_data = specific_view_obj['labels'][label]['data']
-            label_avg = specific_view_obj['labels'][label]['avg']
-            graphs.append(
-                dcc.Graph(
-                    figure={
-                        'data': [
-                            {'x': time_axis, 'y': label_data, 'type': 'bar', 'name': 'Current'},
-                            {'x': time_axis, 'y': label_avg, 'type': 'line', 'name': 'Avg'},
-                        ],
-                        'layout': {
-                            'plot_bgcolor': 'rgba(0,0,0,0)',
-                            'paper_bgcolor': 'rgba(0,0,0,0)',
-                            'font': {
-                                'color': colors['text']
-                            },
-                            'showlegend': False,
-                            'title' : label_name
-                        },
-                    },
-                    style={'height': 300}
-                )
-            )
-            # print(graphs)
-        return graphs
+    elif selected_value:
+        selected_value_dict = json.loads(selected_value)
+        return srequest_from_id(selected_value_dict['id'])
 
     else : #default landing thing
         return [
-            html.H1("StudySpotter")
+            html.P("Some study spaces are more full than others, but which one is more full? Good question! Our app can show and predict how busy the libraries are, and make recommendations based on real time and predicted population densities. So people can better use the spaces. ", style = {'padding-top' : '14px'}),
         ]
 
 if __name__ == "__main__":
