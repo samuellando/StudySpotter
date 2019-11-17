@@ -29,12 +29,18 @@ list_of_locations = {
 
 
 #json_test = '{"id" : "0", "name": "Trottier Building", "lat": 45.507603, "lon" : -73.578973, "density" : 71}'
-
+#r = requests.get('http://35.232.203.137?location=concordiaev', auth=('user', 'pass'))
+#y = r.json()
+#print(r)
+#exit()
 #print(y["id"])
 #response.content
 
-
+r1 = requests.get('http://35.232.203.137?location=mcgilltrotier',auth=('user', 'pass'))
 r = requests.get('http://35.232.203.137', auth=('user', 'pass'))
+
+
+
 y = r.json()
 
 names = []
@@ -43,12 +49,16 @@ lngs = []
 densities = []
 ids =  []
 
+#get data from json 
 for location in y['locations']:
     names.append(location['name'])
     lats.append(float(location['lat']))
     lngs.append(float(location['lng']))
     densities.append(int(location['density']))
     ids.append(location['id'])
+
+
+
 
 app.layout = html.Div([
     html.Div([
@@ -57,7 +67,7 @@ app.layout = html.Div([
                 {'label': 'McGill Trottier', 'value': 'mcgilltrotier'},
                 {'label': 'Concordia EV', 'value': 'concordiaev'},
             ],
-            placeholder="Select a Library",
+            placeholder= "Select a Library",
         )
     ]), 
     
@@ -69,6 +79,9 @@ app.layout = html.Div([
                 Scattermapbox(
                     lat=lats,
                     lon=lngs,
+                    mode="markers",
+                    hoverinfo="text",
+                    text=names,
                 )
             ],
             
@@ -83,9 +96,12 @@ app.layout = html.Div([
                     bearing=0,
                     zoom=12,
                 )
-            ),
-        )
+            )
+        ),
+        style={"height":"1000px"}
     ),
+<<<<<<< HEAD
+=======
     html.Div(id='my-div'),
 
     dcc.Graph(
@@ -96,6 +112,7 @@ app.layout = html.Div([
         )
     ),
 
+>>>>>>> 1d5181679ac87d2d3342c6644f56d5d25b30fe34
 ])
 
 
