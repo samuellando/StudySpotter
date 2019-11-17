@@ -102,12 +102,19 @@ if (isset($_GET["location"])) {
         $sql = "SELECT * FROM $loc where label='$key'";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
-            $points = array();
-            $avgs = array();
+            $counts = array();
             while($row = $result->fetch_assoc()) {
                 $last = $row['last'];
                 $block = intdiv(((time() - 5*3600) - intval($last)), (30*60));
-                $points[$block] = $points[$block] + 1;
+                $counts[$block] = $counts[$block] + 1;
+            }
+            $points = array();
+            $avgs = array();
+            foreach ($counts as $k => $v) {
+               $points[] = $v;
+            }
+            while (sizeof($points) < 48) {
+                $points[] = 0;
             }
             for ($i = 0; $i < 48; $i++) {
                $avgs[$i] = $avg; 
