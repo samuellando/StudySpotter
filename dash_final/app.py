@@ -36,12 +36,6 @@ new_zoom = 12
 new_latitude = 45.507553
 new_longitude = -73.578129
 
-# colors baby
-colors = {
-    'background': '#111111',
-    'text': '#7FDBFF'
-}
-
 # specific view generation vars
 
 time_axis = [
@@ -132,9 +126,20 @@ def srequest_from_id(srequest_id):
     # parsing JSON for specific view
     loc_name = specific_view_obj['name']
     loc_description = specific_view_obj['dsc']
+    loc_businness = float(densities[ids.index(srequest_id)])
+    if loc_businness < 20:
+        business_level = "empty"
+    elif 20 <= loc_businness and loc_businness < 40:
+        business_level = "chillaxed"
+    elif 40 <= loc_businness and loc_businness < 60:
+        business_level = "lively"
+    elif 60 <= loc_businness and loc_businness < 80:
+        business_level = "busy"
+    else:
+        business_level = "hellish"
 
     graphs = [
-        html.Div(children=[html.H1(loc_name), html.P(loc_description)])
+        html.Div(children=[html.H1(loc_name), html.P(loc_description), html.P(">"+business_level, style = {"font-style" : "italic"})])
     ]
     for label in specific_view_obj['labels']:
         label_name = label
@@ -154,7 +159,10 @@ def srequest_from_id(srequest_id):
                             'color': 'white'
                         },
                         'showlegend': False,
-                        'title' : label_name
+                        'title' : label_name,
+                        'yaxis':{
+                             'title':'Density'
+                        }
                     },
                 },
                 style={'height': 300}
@@ -174,9 +182,9 @@ def goto_location(selected_value):
         new_latitude = float(selected_value_dict['lat'])
         new_longitude = float(selected_value_dict['lng'])
     else :
-        new_zoom = 12
-        new_latitude = 45.507553
-        new_longitude = -73.578129
+        new_zoom = 12.3
+        new_latitude = 45.494477
+        new_longitude = -73.585914
 
     return go.Figure(
         data=[  
