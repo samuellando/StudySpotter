@@ -82,6 +82,17 @@ app.layout = html.Div([
                     mode="markers",
                     hoverinfo="text",
                     text=names,
+                    marker= go.scattermapbox.Marker(
+                        size=10,
+                        cmin = 0,
+                        cmax = 100,
+                        showscale=False,
+                        color = densities,
+                        colorscale= [[0, 'rgb(0,255,0)'], [1, 'rgb(255,0,0)']],
+
+                        #opacity=0.3,
+                        # symbol = 'circle',
+                    ),
                 )
             ],
             
@@ -129,6 +140,7 @@ def update_selected_data(clickData):
             label_data = specific_view_obj['labels'][label]['data']
             label_avg = specific_view_obj['labels'][label]['avg']
             # TODO: PLOT GRAPH FOR THIS LABEL
+
 
     return "test"
 
