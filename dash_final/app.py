@@ -1,27 +1,28 @@
-import datetime
-
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import plotly
 import pandas as pd
 import numpy as np
-import json
-import requests
 
-import plotly.graph_objects as go
-from dash.dependencies import Input, Output
 from dash.dependencies import Input, Output
 from plotly import graph_objs as go
 from plotly.graph_objs import *
 from datetime import datetime as dt
 
+import json
+import requests
+print('das')
 app = dash.Dash(
     __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}]
 )
 server = app.server
+
+
+# Plotly mapbox public token
 mapbox_access_token = "pk.eyJ1IjoicGxvdGx5bWFwYm94IiwiYSI6ImNqdnBvNDMyaTAxYzkzeW5ubWdpZ2VjbmMifQ.TXcBE-xg9BFdV2ocecc_7g"
 
+
+# map api request
 r = requests.get('http://35.232.203.137', auth=('user', 'pass'))
 y = r.json()
 
@@ -82,42 +83,47 @@ for location in y['locations']:
     ids.append(location['id'])
     dropdown_options.append({'label': location['name'], 'value': location['lat'] + "," + location['lng']})
 
+    # LAYOUT
 
-
-app.layout = html.Div(className = "row", children=[
-    # searchbar
-    html.Div([
-        dcc.Dropdown(
-            id = 'search-dropdown',
-            options=dropdown_options,
-            placeholder= "Select a Library",
+app.layout = html.Div(
+    children=[
+        # searchbar
+        html.Div([
+            dcc.Dropdown(
+                id = 'search-dropdown',
+                options=dropdown_options,
+                placeholder= "Select a Library",
+            )
+        ], style={
+            'position' : 'absolute',
+            'z-index' : '2',
+            'width' : '30vw',
+            'margin' : '10px 10px 10px 10px'
+        }), 
+        html.Div(
+            className="row",
+            children=[
+                # Column for user controls
+                html.Div(
+                    className="four columns div-user-controls",
+                    children=[ html.Div(id='sidebar', style = {'overflow-y': 'auto', 'height' : '85vh'})],
+                ),
+                # Column for app graphs and plots
+                html.Div(
+                    className="eight columns div-for-charts bg-grey",
+                    children=[
+                        dcc.Graph(
+                            id = "map",  
+                            style={"height":"100vh", "width": "100%", "z-index" : 4},
+                        ),
+                    ],
+                ),
+            ],
         )
-    ], style={
-        'position' : 'absolute',
-        'z-index' : '2',
-        'width' : '30vw',
-        'margin' : '10px 10px 10px 10px'
-    }), 
+    ]
+)
 
-    # sidebar
-    html.Div(id='sidebar', style = {
-        'position' : 'absolute',
-        'width' : '600px',
-        'height' : '100%',
-        'z-index' : '2',
-        'right' : '0',
-        'overflow-y': 'scroll',
-        'background-color' : colors['background']
-    }),
-    
-    # Creating the map element
-    dcc.Graph(
-        id = "map",  
-        style={"height":"100vh", "width": "100%", "z-index" : 4},
-    ),
-
-
-])
+    # CALLBACK EVENTS
 
 # search bar callback event
 @app.callback(Output(component_id='map', component_property='figure'), [Input(component_id='search-dropdown', component_property='value')])
@@ -196,8 +202,8 @@ def update_selected_data(clickData):
                             {'x': time_axis, 'y': label_avg, 'type': 'line', 'name': 'Avg'},
                         ],
                         'layout': {
-                            'plot_bgcolor': colors['background'],
-                            'paper_bgcolor': colors['background'],
+                            'plot_bgcolor': 'rgba(0,0,0,0)',
+                            'paper_bgcolor': 'rgba(0,0,0,0)',
                             'font': {
                                 'color': colors['text']
                             },
@@ -205,15 +211,16 @@ def update_selected_data(clickData):
                             'title' : label_name
                         },
                     },
-                    style={'height': 500}
+                    style={'height': 300}
                 )
             )
             # print(graphs)
         return graphs
 
-    else :
-        return ""
+    else : #default landing thing
+        return [
+            html.H1("StudySpotter")
+        ]
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run_server(debug=True)
