@@ -23,8 +23,11 @@ mapbox_access_token = "pk.eyJ1IjoicGxvdGx5bWFwYm94IiwiYSI6ImNqdnBvNDMyaTAxYzkzeW
 
 
 # map api request
-r = requests.get('http://35.232.203.137', auth=('user', 'pass'))
-y = r.json()
+#r = requests.get('http://35.232.203.137', auth=('user', 'pass'))
+#y = r.json()
+
+with open('locations.json') as json_file:
+    y = json.load(json_file)
 
 # map generation variables
 names = []
@@ -120,8 +123,10 @@ app.layout = html.Div(
     # FUNCTIONS
 
 def srequest_from_id(srequest_id):
-    specific_view_request = requests.get('http://35.232.203.137?location=' + srequest_id , auth=('user', 'pass'))
-    specific_view_obj = specific_view_request.json()
+    #specific_view_request = requests.get('http://35.232.203.137?location=' + srequest_id , auth=('user', 'pass'))
+    #specific_view_obj = specific_view_request.json()
+    with open('data.json') as json_file:
+      specific_view_obj = json.load(json_file)[srequest_id]
 
     # parsing JSON for specific view
     loc_name = specific_view_obj['name']
